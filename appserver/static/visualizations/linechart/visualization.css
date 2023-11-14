@@ -1,0 +1,9 @@
+/*
+ * CSS rules for visualization.
+ * Class namespacing is good practice.
+ */
+
+.chartjs-size-monitor {
+    overflow: hidden;
+    position: relative;
+}
