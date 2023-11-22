@@ -21,7 +21,7 @@ li.chartjs-legend-list-item span {
     margin: 0 3px -2px 0px;
 }
 
-l.chartjs-legend-list {
+ul.chartjs-legend-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: start;
