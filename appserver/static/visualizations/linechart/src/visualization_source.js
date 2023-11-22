@@ -293,24 +293,24 @@ define([
 
             for (const key in formattedData) {
                 
-
-                // console.log(`${key}: ${user[key]}`);
-                dataset.push({
-                    label: key,
-                    data: formattedData[key],
-                    borderColor: this.colors[counter],
-                    backgroundColor: "#fff",
-                    pointStyle: 'circle',
-                    borderWidth: 3,
-                    pointRadius: 8,
-                    pointBackgroundColor: "#fff",
-                    pointHoverRadius: 10,
-                    hoverBorderWidth: 3,
-                    hoverBackgroundColor: `rgb(${this.rgbMap[this.colors[counter]][0]},${this.rgbMap[this.colors[counter]][1]},${this.rgbMap[this.colors[counter]][2]},.9)`,
-                    // hoverBorderColor: `rgb(${this.rgbMap[this.colors[counter]][0] + 20},${this.rgbMap[this.colors[counter]][1] + 20},${this.rgbMap[this.colors[counter]][2] + 20},.01)`,
-                    tension: 0.1,
-                    fill: true
-                })
+                if(!key.startsWith("_")){
+                    dataset.push({
+                        label: key,
+                        data: formattedData[key],
+                        borderColor: this.colors[counter],
+                        backgroundColor: "#fff",
+                        pointStyle: 'circle',
+                        borderWidth: 3,
+                        pointRadius: 8,
+                        pointBackgroundColor: "#fff",
+                        pointHoverRadius: 10,
+                        hoverBorderWidth: 3,
+                        hoverBackgroundColor: `rgb(${this.rgbMap[this.colors[counter]][0]},${this.rgbMap[this.colors[counter]][1]},${this.rgbMap[this.colors[counter]][2]},.9)`,
+                        // hoverBorderColor: `rgb(${this.rgbMap[this.colors[counter]][0] + 20},${this.rgbMap[this.colors[counter]][1] + 20},${this.rgbMap[this.colors[counter]][2] + 20},.01)`,
+                        tension: 0.1,
+                        fill: true
+                    })
+                }
                 counter ++
             }
 
@@ -340,6 +340,10 @@ define([
 
             // Colors
             var customColors = config[this.getPropertyNamespaceInfo().propertyNamespace + 'colors'] || null;
+
+
+            // Time Format
+            var timeformat = config[this.getPropertyNamespaceInfo().propertyNamespace + 'timeformat'] || 'option1';
             
             // set values to options object
             this.options.scales.y.title.text = ylabel
@@ -353,6 +357,7 @@ define([
 
             showLegend = showLegend == 'true' ? true : false
 
+            // adding custom colors 
             if(customColors != null){
                 function hexToRgb(hex) {
                     // Remove the hash if it exists
@@ -374,6 +379,19 @@ define([
                         // add rgb conversion
                         self.rgbMap[element] = hexToRgb(element)
                     })
+                }
+            }
+
+            // time format 
+            console.log(data,timeformat)
+            if(data.fields.length > 0){
+                if(data.fields[0].name == "_time"){
+                    if(timeformat == 'option2') {// date and time
+                        data.labels.forEach((element,index) =>{
+                            data.labels[index] = element.split(" ")[0]
+                            
+                        })
+                    }
                 }
             }
 
