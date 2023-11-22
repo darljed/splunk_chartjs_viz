@@ -14,6 +14,7 @@ module.exports = {
     },
     externals: [
         'api/SplunkVisualizationBase',
-        'api/SplunkVisualizationUtils'
+        'api/SplunkVisualizationUtils',
+        '/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js'
     ]
 };

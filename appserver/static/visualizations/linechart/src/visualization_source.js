@@ -1,37 +1,44 @@
+const { type } = require("jquery");
+
 /*
  * Visualization source
  */
 define([
-            'jquery',
-            'chart.js',
-            'api/SplunkVisualizationBase',
-            'api/SplunkVisualizationUtils'
-            // Add required assets to this list
-        ],
-        function(
-            $,
-            Chart,
-            SplunkVisualizationBase,
-            vizUtils
-        ) {
+        'jquery',
+        '/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js',
+        'api/SplunkVisualizationBase',
+        'api/SplunkVisualizationUtils',
+        // Add required assets to this list
+    ],
+    function(
+        $,
+        Chart,
+        SplunkVisualizationBase,
+        vizUtils
+    ) {
   
     // Extend from SplunkVisualizationBase
     return SplunkVisualizationBase.extend({
-  
+
         initialize: function() {
             SplunkVisualizationBase.prototype.initialize.apply(this, arguments);
             this.$el = $(this.el);
-            console.log(this.el)
 
             this.id="chartjs-line"+Math.floor((Math.random() * 1000) + 1);
-            this.$el.append(`<canvas id="${this.id}"></canvas>`);
-            delete this.myData
-            console.log("initial load:",this)
+            this.$el.append(`
+            <div class="chartjs-line legend-contents" id="${this.id}_legend">
+                <ul class="chartjs-legend-list">
+                </ul>
+            </div>
+            <canvas id="${this.id}"></canvas>`);
+            this.$el.addClass('chartjs-line')
+            // delete this.myData
+            // console.log("initial load:",this)
             
             // Initialization logic goes here
 
             this.colors = [
-                "#494AE2", "#E24A49", "#49E2E0", "#E2C949", "#7BE249", 
+                "#494AE2", "#1f7c52", "#E24A49", "#49E2E0", "#E2C949", "#7BE249", 
                 "#AD49E2", "#E249C3", "#49B3E2", "#E27449", "#49E27B",
                 "#E2A749", "#4970E2", "#E249A4", "#49E2B5", "#E2D349",
                 "#4977E2", "#E2496D", "#49E2D8", "#E29949", "#4971E2",
@@ -56,6 +63,7 @@ define([
 
               this.rgbMap = {
                 "#494AE2": [73, 74, 226],
+                "#1f7c52": [31, 124, 82],
                 "#E24A49": [226, 74, 73],
                 "#49E2E0": [73, 226, 224],
                 "#E2C949": [226, 201, 73],
@@ -162,18 +170,85 @@ define([
                 "#E249C1": [226, 73, 193],
             };
 
-            
             this.options = {
-                responsive: true,
+                layout:{
+                    padding: 30
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            // forces step size to be 50 units
+                            stepSize: 25, // default
+                            padding: 20
+                        },
+                        grid: {
+                            color: '#ededed',
+                            borderColor: '#ededed',
+                            tickColor: '#fff'
+                        },
+                        title: {
+                            text: '',
+                            display: true,
+                            padding: {
+                                top: 5,
+                                bottom: 5,
+                                left: 5,
+                                right: 5
+                            }
+                        },
+                    },
+                    x: {    
+                        grid: {
+                            color: '#ededed',
+                            borderColor: '#ededed',
+                            tickColor: '#fff'
+                        },
+                        ticks: {
+                            padding: 20
+                        }
+                    }
+                },
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: false
+                        display: false,
+                        // labels: {
+                        //     usePointStyle: true,
+                        //     pointStyle: 'circle',
+                        //     padding: 20,
+                        // },
+                        // position: 'top',
+                        // align: 'start'
                     },
                     title: {
-                        display: true,
-                        text: 'TEST',
-                      }
+                        display: false,
+                    },
+                    tooltip: {
+                        position: 'custom',
+                        displayColors: false,
+                        usePointStyle: false,
+                        yAlign: 'bottom',
+                        callbacks: {
+                            title: function(context) {
+                                return null
+                            },
+                            label: function(context) {
+                                // console.log(context)
+                                const label = context.dataset.label
+                                const dataIndex = context.dataIndex
+                                const value = context.dataset.data[dataIndex]
+                                return `${label} : ${value}`
+                            },
+                            labelPointStyles: function(){
+                                return {}
+                            }
+                        }
+                    }
+                },
+                interaction:{
+                    mode: 'nearest',
+                    intersect: false
                 }
             }
         },
@@ -185,13 +260,17 @@ define([
             // Format data 
             let labelList = []
             let formattedData = {}
+            console.log(data)
 
             // set chart title
             // this.options.plugins.title.text = data.fields[0].name
+            // this.options.plugins.title.display = true
 
             let initialLoad = true
             data.rows.forEach(element => {
-                const label = element[0]
+
+                
+                const label = data.fields[0].name == '_time' ? element[0].split('.')[0].replace('T',' ') : element[0]
                 labelList.push(label)
                 for(var i = 1;i<element.length;i++){
                     const fieldLabel = data.fields[i].name
@@ -199,13 +278,14 @@ define([
                         formattedData[fieldLabel] = []
                     }
 
+
                     formattedData[fieldLabel].push(element[i])
                 }
                 initialLoad = false
             });
-            console.log(data)
-            console.log("labelList",labelList)
-            console.log("formattedData",formattedData)
+            // console.log(data)
+            // console.log("labelList",labelList)
+            // console.log("formattedData",formattedData)
 
             // create datasets 
             let dataset = []
@@ -221,9 +301,14 @@ define([
                     borderColor: this.colors[counter],
                     backgroundColor: "#fff",
                     pointStyle: 'circle',
+                    borderWidth: 3,
                     pointRadius: 8,
+                    pointBackgroundColor: "#fff",
                     pointHoverRadius: 10,
-                    tension: 0,
+                    hoverBorderWidth: 3,
+                    hoverBackgroundColor: `rgb(${this.rgbMap[this.colors[counter]][0]},${this.rgbMap[this.colors[counter]][1]},${this.rgbMap[this.colors[counter]][2]},.9)`,
+                    // hoverBorderColor: `rgb(${this.rgbMap[this.colors[counter]][0] + 20},${this.rgbMap[this.colors[counter]][1] + 20},${this.rgbMap[this.colors[counter]][2] + 20},.01)`,
+                    tension: 0.1,
                     fill: true
                 })
                 counter ++
@@ -231,7 +316,8 @@ define([
 
             return {
                 labels: labelList,
-                datasets: dataset
+                datasets: dataset,
+                fields: data.fields
             };
         },
   
@@ -239,43 +325,183 @@ define([
         //  'data' will be the data object returned from formatData or from the search
         //  'config' will be the configuration property object
         updateView: function(data, config) {
-            console.log("checking if the canvas element exists",$(`#${this.id}`))
+            const self = this
+
             // Draw something here
             const ctx = document.getElementById(this.id).getContext("2d")
 
-                
-            // const data2 = {
-            //     labels: ["Jan","Feb","Mar","Apr","May","Jun","Jul"],
-            //     datasets: [{
-            //       label: 'My First Dataset',
-            //       data: [65, 59, 80, 81, 56, 55, 40],
-            //       fill: false,
-            //       borderColor: 'rgb(75, 192, 192)',
-            //       tension: 0.1
-            //     }]
-            //   };
+            // user preferences 
+            // Y Axis
+            var ylabel = config[this.getPropertyNamespaceInfo().propertyNamespace + 'ylabel'] || '';
+            var stepval = config[this.getPropertyNamespaceInfo().propertyNamespace + 'stepval'] || '';
 
-            let counter = 0; 
+            // Legend
+            var showLegend = config[this.getPropertyNamespaceInfo().propertyNamespace + 'showLegend'] || 'true';
 
-            data.datasets.forEach(element => {
+            // Colors
+            var customColors = config[this.getPropertyNamespaceInfo().propertyNamespace + 'colors'] || null;
+            
+            // set values to options object
+            this.options.scales.y.title.text = ylabel
+
+            if(stepval == "" || isNaN(stepval) ){
+                delete this.options.scales.y.ticks.stepSize
+            }
+            else{
+                this.options.scales.y.ticks.stepSize = stepval
+            }
+
+            showLegend = showLegend == 'true' ? true : false
+
+            if(customColors != null){
+                function hexToRgb(hex) {
+                    // Remove the hash if it exists
+                    hex = hex.replace(/^#/, '');
+                  
+                    // Parse the hex value to separate R, G, and B components
+                    let bigint = parseInt(hex, 16);
+                    let r = (bigint >> 16) & 255;
+                    let g = (bigint >> 8) & 255;
+                    let b = bigint & 255;
+                  
+                    // Return the RGB values as an object
+                    return [r, g, b];
+                }
+                const c = customColors.split(",")
+                if(typeof(c) == 'object'){
+                    c.forEach((element,index)=>{
+                        self.colors[index] = element
+                        // add rgb conversion
+                        self.rgbMap[element] = hexToRgb(element)
+                    })
+                }
+            }
+
+            // add the transparent gradient background to the chart
+            data.datasets.forEach((element,counter) => {
                 
+                element.borderColor = this.colors[counter]
+                element.hoverBackgroundColor =  `rgb(${this.rgbMap[this.colors[counter]][0]},${this.rgbMap[this.colors[counter]][1]},${this.rgbMap[this.colors[counter]][2]},.9)`
                 var gradient = ctx.createLinearGradient(0, 0, 0, 350);
-                gradient.addColorStop(0, `rgb(${this.rgbMap[this.colors[counter]][0]},${this.rgbMap[this.colors[counter]][1]},${this.rgbMap[this.colors[counter]][2]},.15`);
+                gradient.addColorStop(0, `rgb(${this.rgbMap[this.colors[counter]][0]},${this.rgbMap[this.colors[counter]][1]},${this.rgbMap[this.colors[counter]][2]},.3`);
                 gradient.addColorStop(1, 'rgb(255,255,255,0)');
 
                 element.backgroundColor = gradient
 
-                counter++
             })
-            console.log(data)
 
-            this.NewChart = new Chart(
-                ctx,{
-                    type: 'line',
-                    data: data,
-                    options: this.options,
+
+            // chart customization starts here using custom plugin
+
+            // tooltip custom position
+
+            Chart.Tooltip.positioners.custom = function(elements, eventPosition) {
+                // /** @type {Chart.Tooltip} */
+                var tooltip = this;
+                let pos = {x:eventPosition.x,y:0}
+                if(elements.length > 0){
+                    let x = elements[0].element.x
+                    let y = elements[0].element.y - 15
+                    pos = {
+                        x:x,
+                        y:y
                     }
-            );
+                    // ISSUE: tooltip doesn't show when cursor hovers out of the chart and hovers back in.
+                }
+            
+                return pos;
+            }
+
+            // highlightLine : custom highlights to the line chart and hover effect to show a vertical line on hover.
+            
+            const highlightLine = {
+                id: 'highlightLine',
+                beforeDatasetsDraw(chart, args, plugins){
+                    const { data } = chart;
+                    datasetMetaArray = chart.getSortedVisibleDatasetMetas();
+
+                    // console.log(datasetMetaArray)
+
+                    for(let i = 0; i < datasetMetaArray.length; i++){
+                        const datasetMeta = datasetMetaArray[i];
+                        const index = datasetMeta.index
+
+                        datasetMeta.data.forEach(element =>{
+                            if(element.active){
+                                // console.log(element)
+                                // Start a new Path
+                                ctx.beginPath();
+                                ctx.moveTo(element.x, element.y);
+                                ctx.lineTo(element.x, datasetMeta.yScale.bottom);
+                                ctx.strokeStyle = self.colors[index]
+                                ctx.lineWidth = 3;
+                                // Draw the Path
+                                ctx.stroke();
+
+                                const height = datasetMeta.yScale.bottom -  datasetMeta.yScale.top
+
+                                // create rectangle hover effect
+                                ctx.fillStyle = `rgb(${self.rgbMap[self.colors[index]][0]},${self.rgbMap[self.colors[index]][1]},${self.rgbMap[self.colors[index]][2]},.05)`
+                                ctx.fillRect(element.x - 25,datasetMeta.yScale.top,50,height)
+
+                                data.datasets[index].borderColor = self.colors[index];
+                                chart.update();
+                            }
+                        })
+                        
+                    }
+
+
+                }
+
+            }
+
+            const legendPadding = {
+                beforeInit: function(chart, options) {
+                    // Get a reference to the original fit function
+                    const originalFit = chart.legend.fit;
+                
+                    // Override the fit function
+                    chart.legend.fit = function fit() {
+                      // Call the original function and bind scope in order to use `this` correctly inside it
+                      originalFit.bind(chart.legend)();
+                      // Change the height as suggested in other answers
+                      this.height += 50;
+                    }
+                }
+            }
+
+            // function updateLegend()
+
+            const plugins = [highlightLine,legendPadding] // register the plugin
+
+            // end of customization ------##
+
+            if(this.NewChart!=undefined){
+                this.NewChart.destroy(); // for chart update and re-rendering purposes
+            }
+            
+            this.NewChart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: this.options,
+                plugins: plugins // applies the custom plugin here
+            });
+
+
+            //generate legend
+             let htmlLegend = ``
+             data.datasets.forEach((element,index) => {
+                htmlLegend += `
+                <li class="chartjs-legend-list-item" data-index="${index}" data-state="show">
+                    <span style="background: ${this.colors[index ]}"></span>
+                    ${element.label}
+                </li>`
+             })
+             if(showLegend){
+                $(`#${this.id}_legend ul.chartjs-legend-list`).html('')
+                $(`#${this.id}_legend ul.chartjs-legend-list`).append(htmlLegend)
+             }
 
         },
 
