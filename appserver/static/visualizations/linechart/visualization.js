@@ -75,7 +75,7 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                <ul class="chartjs-legend-list">
 	                </ul>
 	            </div>
-	            <canvas id="${this.id}" style="padding: 10px;"></canvas>`);
+	            <canvas id="${this.id}"></canvas>`);
 	            this.$el.addClass('chartjs-line')
 	            // delete this.myData
 	            // console.log("initial load:",this)
@@ -305,6 +305,7 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	            // Format data 
 	            let labelList = []
 	            let formattedData = {}
+	            console.log(data)
 
 	            // set chart title
 	            // this.options.plugins.title.text = data.fields[0].name
@@ -312,13 +313,16 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 
 	            let initialLoad = true
 	            data.rows.forEach(element => {
-	                const label = element[0]
+
+	                
+	                const label = data.fields[0].name == '_time' ? element[0].split('.')[0].replace('T',' ') : element[0]
 	                labelList.push(label)
 	                for(var i = 1;i<element.length;i++){
 	                    const fieldLabel = data.fields[i].name
 	                    if(initialLoad){
 	                        formattedData[fieldLabel] = []
 	                    }
+
 
 	                    formattedData[fieldLabel].push(element[i])
 	                }
@@ -540,6 +544,7 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                </li>`
 	             })
 	             if(showLegend){
+	                $(`#${this.id}_legend ul.chartjs-legend-list`).html('')
 	                $(`#${this.id}_legend ul.chartjs-legend-list`).append(htmlLegend)
 	             }
 
