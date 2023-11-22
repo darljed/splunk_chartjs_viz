@@ -21,8 +21,11 @@ li.chartjs-legend-list-item span {
     margin: 0 3px -2px 0px;
 }
 
-ul.chartjs-legend-list {
+l.chartjs-legend-list {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    flex-direction: row;
 }
 
 li.chartjs-legend-list-item:nth-child(n+2) {
