@@ -1,0 +1,43 @@
+/*
+ * CSS rules for visualization.
+ * Class namespacing is good practice.
+ */
+
+.chartjs-size-monitor {
+    overflow: hidden;
+    position: relative;
+}
+
+/* legend  */
+ul.chartjs-legend-list {
+    list-style: none;
+}
+
+li.chartjs-legend-list-item span {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    border-radius: 50%;
+    margin: 0 3px -2px 0px;
+}
+
+ul.chartjs-legend-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    flex-direction: row;
+}
+
+li.chartjs-legend-list-item:nth-child(n+2) {
+    margin-left: 20px;
+}
+
+.chartjs-line.legend-contents {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+li.chartjs-legend-list-item {
+    cursor: pointer;
+}
