@@ -171,6 +171,14 @@ define([
             };
 
             this.options = {
+                layout:{
+                    padding: {
+                        top: 30,
+                        left: 60,
+                        right: 30,
+                        bottom: 50
+                    }
+                },
                 scales: {
                   y: {
                         beginAtZero: true,
@@ -209,7 +217,7 @@ define([
                       text: 'This is a test label',
                   },
                   tooltip: {
-                      position: 'custom',
+                      position: 'customPos',
                       displayColors: false,
                       usePointStyle: false,
                       yAlign: 'top',
@@ -229,7 +237,7 @@ define([
                               return {}
                           },
                           labelTextColor: function(context) {
-                              console.log(context)
+                            //   console.log(context)
                               const base = context.element.base
                               const y = context.element.y
                               if(y > base - 30){
@@ -257,7 +265,7 @@ define([
             // Format data 
             let labelList = []
             let formattedData = {}
-            console.log(data)
+            // console.log(data)
 
             // set chart title
             // this.options.plugins.title.text = data.fields[0].name
@@ -295,10 +303,6 @@ define([
                         label: key,
                         data: formattedData[key],
                         backgroundColor: this.colors[counter],
-                        borderRadius: {
-                            topLeft: 9,
-                            topRight: 9
-                        },
                         fill: true,
                         borderSkipped: false,
                     })
@@ -328,7 +332,7 @@ define([
             var timeformat = config[this.getPropertyNamespaceInfo().propertyNamespace + 'timeformat'] || 'option1';
             
             // time format 
-            console.log(data,timeformat)
+            // console.log(data,timeformat)
             if(data.fields.length > 0){
                 if(data.fields[0].name == "_time"){
                     if(timeformat == 'option2') {// date and time
@@ -340,13 +344,31 @@ define([
                 }
             }
 
+            // border radius
+
+            var topLeft = config[this.getPropertyNamespaceInfo().propertyNamespace + 'brTopLeft'] || 9;
+            var topRight = config[this.getPropertyNamespaceInfo().propertyNamespace + 'brTopRight'] || 9;
+            var bottomLeft = config[this.getPropertyNamespaceInfo().propertyNamespace + 'brBottomLeft'] || 0;
+            var bottomRight = config[this.getPropertyNamespaceInfo().propertyNamespace + 'brBottomRight'] || 0;
+
+            const borderRadius = {
+                topLeft: topLeft,
+                topRight: topRight,
+                bottomLeft: bottomLeft,
+                bottomRight: bottomRight,
+            }
+
+            data.datasets.forEach((element,index)=>{
+                data.datasets[index]['borderRadius'] = borderRadius
+            })
+
             // chart customization starts here using custom plugin
 
             // tooltip custom position
 
-            Chart.Tooltip.positioners.custom = function(elements, eventPosition) {
+            Chart.Tooltip.positioners.customPos = function(elements, eventPosition) {
                 // /** @type {Chart.Tooltip} */
-                // console.log(elements)
+                console.log(elements)
                 var tooltip = this;
                 let pos = {x:eventPosition.x,y:0}
                 if(elements.length > 0){
@@ -362,7 +384,6 @@ define([
                     }
                     // ISSUE: tooltip doesn't show when cursor hovers out of the chart and hovers back in.
                 }
-            
                 return pos;
             }
 

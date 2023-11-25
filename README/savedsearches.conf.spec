@@ -17,3 +17,9 @@ display.visualizations.custom.splunk_chartjs_viz.linechart.colors = <string>
 # BAR CHART
 # Time Format
 display.visualizations.custom.splunk_chartjs_viz.barchart.timeformat = <string>
+
+# Border Radius
+display.visualizations.custom.splunk_chartjs_viz.barchart.brTopLeft = <float>
+display.visualizations.custom.splunk_chartjs_viz.barchart.brBottomLeft = <float>
+display.visualizations.custom.splunk_chartjs_viz.barchart.brTopRight = <float>
+display.visualizations.custom.splunk_chartjs_viz.barchart.brBottomRight = <float>

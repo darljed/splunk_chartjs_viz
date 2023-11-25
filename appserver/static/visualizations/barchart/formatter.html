@@ -1,8 +1,22 @@
-<form class="splunk-formatter-section" section-label="Options">
+<form class="splunk-formatter-section" section-label="Formatting">
     <splunk-control-group label="Date Format (_time)">
         <splunk-radio-input name="{{VIZ_NAMESPACE}}.timeformat" value="true">
             <option value="option1">Date and Time</option>
             <option value="option2">Date Only</option>
         </splunk-radio-input>
+    </splunk-control-group>
+</form>
+<form class="splunk-formatter-section" section-label="Border Radius">
+    <splunk-control-group label="Top Left">
+        <splunk-text-input name="{{VIZ_NAMESPACE}}.brTopLeft" value="9"></splunk-text-input>
+    </splunk-control-group>
+    <splunk-control-group label="Top Right">
+        <splunk-text-input name="{{VIZ_NAMESPACE}}.brTopRight" value="9"></splunk-text-input>
+    </splunk-control-group>
+    <splunk-control-group label="Bottom Left">
+        <splunk-text-input name="{{VIZ_NAMESPACE}}.brBottomLeft"></splunk-text-input>
+    </splunk-control-group>
+    <splunk-control-group label="Bottom Right">
+        <splunk-text-input name="{{VIZ_NAMESPACE}}.brBottomRight"></splunk-text-input>
     </splunk-control-group>
 </form>
