@@ -215,6 +215,122 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                "#E249C1": [226, 73, 193],
 	            };
 
+	            // tooltip styles 
+	            this.tooltip_style1 = {
+	                position: 'customPos',
+	                displayColors: false,
+	                usePointStyle: false,
+	                yAlign: 'top',
+	                backgroundColor: 'rgb(255,255,255,0)',
+	                bodyColor: '#fff',
+	                callbacks: {
+	                    title: function(context) {
+	                        return null
+	                    },
+	                    label: function(context) {
+	                        // const label = context.dataset.label
+	                        const dataIndex = context.dataIndex
+	                        const value = context.dataset.data[dataIndex]
+	                        return value
+	                    },
+	                    labelPointStyles: function(){
+	                        return {}
+	                    },
+	                    labelTextColor: function(context) {
+	                      //   console.log(context)
+	                        const base = context.element.base
+	                        const y = context.element.y
+	                        if(y > base - 30){
+	                          return '#000';
+	                        }
+	                        else{
+	                          return '#fff';
+	                        }
+	                      
+	                  }
+	                }
+	            }
+
+	            const getOrCreateTooltip = (chart,tooltip) => {
+	                let tooltipEl = chart.canvas.parentNode.querySelector('div');
+	              
+	                if (!tooltipEl) {
+	                  tooltipEl = document.createElement('div');
+	                  tooltipEl.style.position = 'absolute'
+	                  // tooltipEl.style.transform = 'translate(-50%, 0)';
+	                  tooltipEl.style.transition = 'all .1s ease';
+	                  chart.canvas.parentNode.appendChild(tooltipEl);
+	                }
+	              
+	                return tooltipEl;
+	            };
+	              
+	            const externalTooltipHandler = (context) => {
+	                // Tooltip Element
+	                const {chart, tooltip} = context;
+	                const tooltipEl = getOrCreateTooltip(chart,tooltip);
+	              
+	                // Hide if no tooltip
+	                if (tooltip.opacity === 0) {
+	                  tooltipEl.style.opacity = 0;
+	                  return;
+	                }
+	                let childItems = ''
+	                tooltip.dataPoints.forEach(element => {
+	                  childItems+= `
+	                  <div class="custom-tooltip1-item">
+	                    <div class="custom-tooltip1-item-highlight" style="background: ${element.dataset.backgroundColor}"></div>
+	                    <div class="custom-tooltip1-item-details">
+	                      <span class="custom-tooltip1-item-label">${element.dataset.label}</span>
+	                      <span class="custom-tooltip1-item-value">${element.dataset.data[element.dataIndex]}</span>
+	                    </div>
+	                  </div>
+	                  `
+	                });
+	                
+	          
+	                tooltipEl.innerHTML = `
+	                <div class="custom-tooltip1">
+	                  <span class="custom-tooltip1-label">${tooltip.title[0]}</span>
+	                  <div class="custom-tooltip1-items-container">
+	                    ${childItems}
+	                  </div>
+	                </div>`
+	          
+	          
+	              
+	              
+	                const {offsetLeft: positionX, offsetTop: positionY} = chart.canvas;
+	                console.log(tooltip)
+	                // Display, position, and set styles for font
+	          
+	                let left = positionX + (tooltip.caretX - 170)
+	                if(left + 300 > (chart.chartArea.right - 15)){
+	                  left = (chart.chartArea.right - 15) - 300
+	                }if(left < (chart.chartArea.left + 15)){
+	                  left = (chart.chartArea.left + 15) 
+	                }
+	          
+	                let top = positionY + (tooltip.caretY - 150)
+	                // console.log(top)
+	                // if(top < chart.chartArea.top){
+	                //     top = chart.chartArea.top
+	                // }
+	                tooltipEl.style.opacity = 1;
+	                tooltipEl.style.left =  left + 'px';
+	                tooltipEl.style.top = top + 'px';
+	                tooltipEl.style.font = tooltip.options.bodyFont.string;
+	                tooltipEl.style.padding = tooltip.options.padding + 'px ' + tooltip.options.padding + 'px';
+	                tooltipEl.style.pointerEvents = 'none';
+	                
+	            };
+
+	            this.tooltip_style2 = {enabled: false,
+	                position: 'nearest',
+	                mode: 'index',
+	                external: externalTooltipHandler
+	            }
+
 	            this.options = {
 	                layout:{
 	                    padding: {
@@ -237,6 +353,7 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                          tickColor: '#fff',
 	                          borderDash: [10]
 	                        },
+	                        stacked: true
 	                    },
 	                  x: {    
 	                      grid: {
@@ -261,40 +378,7 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                      display: false,
 	                      text: 'This is a test label',
 	                  },
-	                  tooltip: {
-	                      position: 'customPos',
-	                      displayColors: false,
-	                      usePointStyle: false,
-	                      yAlign: 'top',
-	                      backgroundColor: 'rgb(255,255,255,0)',
-	                      bodyColor: '#fff',
-	                      callbacks: {
-	                          title: function(context) {
-	                              return null
-	                          },
-	                          label: function(context) {
-	                              // const label = context.dataset.label
-	                              const dataIndex = context.dataIndex
-	                              const value = context.dataset.data[dataIndex]
-	                              return value
-	                          },
-	                          labelPointStyles: function(){
-	                              return {}
-	                          },
-	                          labelTextColor: function(context) {
-	                            //   console.log(context)
-	                              const base = context.element.base
-	                              const y = context.element.y
-	                              if(y > base - 30){
-	                                return '#000';
-	                              }
-	                              else{
-	                                return '#fff';
-	                              }
-	                            
-	                        }
-	                      }
-	                  }
+	                  tooltip: this.tooltip_style1
 	              },
 	                  interaction:{
 	                      mode: 'nearest',
@@ -311,10 +395,6 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	            let labelList = []
 	            let formattedData = {}
 	            // console.log(data)
-
-	            // set chart title
-	            // this.options.plugins.title.text = data.fields[0].name
-	            // this.options.plugins.title.display = true
 
 	            let initialLoad = true
 	            data.rows.forEach(element => {
@@ -333,9 +413,6 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                }
 	                initialLoad = false
 	            });
-	            // console.log(data)
-	            // console.log("labelList",labelList)
-	            // console.log("formattedData",formattedData)
 
 	            // create datasets 
 	            let dataset = []
@@ -395,6 +472,7 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	            var topRight = config[this.getPropertyNamespaceInfo().propertyNamespace + 'brTopRight'] || 9;
 	            var bottomLeft = config[this.getPropertyNamespaceInfo().propertyNamespace + 'brBottomLeft'] || 0;
 	            var bottomRight = config[this.getPropertyNamespaceInfo().propertyNamespace + 'brBottomRight'] || 0;
+	            
 
 	            const borderRadius = {
 	                topLeft: topLeft,
@@ -403,13 +481,60 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                bottomRight: bottomRight,
 	            }
 
+	            var isStacked = config[this.getPropertyNamespaceInfo().propertyNamespace + 'stacked'] || true;
+	            isStacked = isStacked === 'false' ? false : true
+	            const datasetCount = data.datasets.length
 	            data.datasets.forEach((element,index)=>{
-	                data.datasets[index]['borderRadius'] = borderRadius
+	                
+
+	                if(isStacked){
+	                    if(index == 0){
+	                        data.datasets[index]['borderRadius'] = {
+	                            topLeft: 0,
+	                            topRight: 0,
+	                            bottomLeft: bottomLeft,
+	                            bottomRight: bottomRight,
+	                        }
+	                    }
+	                    else if(index == datasetCount - 1){
+	                        data.datasets[index]['borderRadius'] = {
+	                            topLeft: topLeft,
+	                            topRight: topRight,
+	                            bottomLeft: 0,
+	                            bottomRight: 0,
+	                        }
+	                    }
+	                    else{
+	                        data.datasets[index]['borderRadius'] = {
+	                            topLeft: 0,
+	                            topRight: 0,
+	                            bottomLeft: 0,
+	                            bottomRight: 0,
+	                        }
+	                    }
+	                    data.datasets[index]['borderWidth'] = 2
+	                    data.datasets[index]['borderColor'] = `rgb(0,0,0,0)`
+	                }
+	                else{
+	                    data.datasets[index]['borderRadius'] = borderRadius
+	                }
 	            })
 
+	            // tooltip style selection 
+	            var tooltip_style = config[this.getPropertyNamespaceInfo().propertyNamespace + 'tooltip_style'] || 'style1';
+	            let pref_tooltip = this.tooltip_style1
+	            if(tooltip_style == 'style1'){
+	                pref_tooltip = this.tooltip_style1
+	            }
+	            else if(tooltip_style == 'style2'){
+	                pref_tooltip = this.tooltip_style2
+	            }
+	            // set prefered tooltip style
+	            this.options.plugins.tooltip = pref_tooltip
 	            // chart customization starts here using custom plugin
 
-	            // tooltip custom position
+	            // ########## STYLE 1 ############
+	            // tooltip custom position - 
 
 	            Chart.Tooltip.positioners.customPos = function(elements, eventPosition) {
 	                // /** @type {Chart.Tooltip} */
@@ -467,10 +592,12 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                }
 	            }
 
-
-	            // function updateLegend()
-
 	            const plugins = [highlightbars] // register the plugin
+
+	            // ########## STYLE 2 ############
+
+	            
+
 
 	            // end of customization ------##
 
@@ -485,20 +612,6 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                plugins: plugins // applies the custom plugin here
 	            });
 
-
-	            //generate legend
-	            //  let htmlLegend = ``
-	            //  data.datasets.forEach((element,index) => {
-	            //     htmlLegend += `
-	            //     <li class="chartjs-legend-list-item" data-index="${index}" data-state="show">
-	            //         <span style="background: ${this.colors[index ]}"></span>
-	            //         ${element.label}
-	            //     </li>`
-	            //  })
-	            //  if(showLegend){
-	            //     $(`#${this.id}_legend ul.chartjs-legend-list`).html('')
-	            //     $(`#${this.id}_legend ul.chartjs-legend-list`).append(htmlLegend)
-	            //  }
 
 	        },
 

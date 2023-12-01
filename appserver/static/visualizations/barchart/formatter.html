@@ -5,6 +5,12 @@
             <option value="option2">Date Only</option>
         </splunk-radio-input>
     </splunk-control-group>
+    <splunk-control-group label="Stacked">
+        <splunk-radio-input name="{{VIZ_NAMESPACE}}.stacked" value="true">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </splunk-radio-input>
+    </splunk-control-group>
 </form>
 <form class="splunk-formatter-section" section-label="Border Radius">
     <splunk-control-group label="Top Left">
@@ -18,5 +24,13 @@
     </splunk-control-group>
     <splunk-control-group label="Bottom Right">
         <splunk-text-input name="{{VIZ_NAMESPACE}}.brBottomRight"></splunk-text-input>
+    </splunk-control-group>
+</form>
+<form class="splunk-formatter-section" section-label="Tooltip Style">
+    <splunk-control-group label="">
+        <splunk-radio-input name="{{VIZ_NAMESPACE}}.tooltip_style" value="true">
+            <option value="style1">Style 1</option>
+            <option value="style2">Style 2</option>
+        </splunk-radio-input>
     </splunk-control-group>
 </form>

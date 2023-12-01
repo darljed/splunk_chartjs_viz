@@ -3,6 +3,12 @@
  * Class namespacing is good practice.
  */
 
+/* override bootstrap */
+.shared-reportvisualizer, .panel-body.dashboard-element-body, .panel-body.dashboard-element-body .splunk-view, .dashboard-element, .panel-element-row {
+    overflow: visible !important;
+}
+
+
 .chartjs-size-monitor {
     overflow: hidden;
     position: relative;
@@ -40,4 +46,80 @@ li.chartjs-legend-list-item:nth-child(n+2) {
 
 li.chartjs-legend-list-item {
     cursor: pointer;
+}
+
+
+/* custom tooltip 1 */
+
+
+.custom-tooltip1 {
+    padding: 13px;
+    background: #fff;
+    width: 300px;
+    border-radius: 9px;
+    border: 1px solid #E8EAED;
+    box-shadow: 0 4px 7px 0px #9f9f9f;
+    position: relative;
+}
+
+/* .custom-tooltip1::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -10px;
+  border-width: 10px;
+  border-style: solid;
+  z-index: 8;
+  border-color: #E8EAED transparent transparent transparent;
+}
+.custom-tooltip1::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -8px;
+  border-width: 8px;
+  border-style: solid;
+  z-index: 7;
+  border-color: #fff transparent transparent transparent;
+} */
+
+.custom-tooltip1-items-container {
+    margin-top: 10px;
+    padding: 5px;
+    background: #F3F4F6;
+    border: 1px solid #E8EAED;
+    border-radius: 9px;
+    display: flex;
+}
+
+.custom-tooltip1-item {
+    display: flex;
+    flex-grow: 1;
+    flex-basis: 0;
+    font-size: 9pt;
+    padding: 10px;
+    background: #fff;
+    width: 50%;
+    border-radius: 5px;
+}
+.custom-tooltip1-item:nth-child(n+2) {
+    margin-left: 3px;
+    width: calc(50% - 3px);
+}
+
+.custom-tooltip1-item-highlight {
+    width: 3px;
+    background: lightgray;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+
+.custom-tooltip1-item-details span {
+    display: block;
+}
+
+span.custom-tooltip1-item-value {
+    font-weight: 900;
 }
