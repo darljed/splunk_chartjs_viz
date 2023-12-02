@@ -287,21 +287,9 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                  </div>
 	                  `
 	                });
-	                
-	          
-	                tooltipEl.innerHTML = `
-	                <div class="custom-tooltip1">
-	                  <span class="custom-tooltip1-label">${tooltip.title[0]}</span>
-	                  <div class="custom-tooltip1-items-container">
-	                    ${childItems}
-	                  </div>
-	                </div>`
-	          
-	          
-	              
-	              
+
+
 	                const {offsetLeft: positionX, offsetTop: positionY} = chart.canvas;
-	                console.log(tooltip)
 	                // Display, position, and set styles for font
 	          
 	                let left = positionX + (tooltip.caretX - 170)
@@ -312,10 +300,23 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                }
 	          
 	                let top = positionY + (tooltip.caretY - 150)
-	                // console.log(top)
+	                console.log(tooltip)
 	                // if(top < chart.chartArea.top){
 	                //     top = chart.chartArea.top
 	                // }
+	                
+	                console.log(tooltip.caretX)
+	                tooltipEl.innerHTML = `
+	                <div class="custom-tooltip1">
+	                  <span class="custom-tooltip1-label">${tooltip.title[0]}</span>
+	                  <div class="custom-tooltip1-items-container">
+	                    ${childItems}
+	                  </div>
+	                  <div class="custom-tooltip1-carret" style="left: ${tooltip.caretX - left - 10}px"></div>
+	                </div>`
+	          
+	          
+	              
 	                tooltipEl.style.opacity = 1;
 	                tooltipEl.style.left =  left + 'px';
 	                tooltipEl.style.top = top + 'px';
@@ -427,6 +428,7 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                        backgroundColor: this.colors[counter],
 	                        fill: true,
 	                        borderSkipped: false,
+	                        barPercentage: .6
 	                    })
 	                }
 	                counter ++
@@ -481,7 +483,7 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                bottomRight: bottomRight,
 	            }
 
-	            var isStacked = config[this.getPropertyNamespaceInfo().propertyNamespace + 'stacked'] || true;
+	            var isStacked = config[this.getPropertyNamespaceInfo().propertyNamespace + 'stacked'] || false;
 	            isStacked = isStacked === 'false' ? false : true
 	            const datasetCount = data.datasets.length
 	            data.datasets.forEach((element,index)=>{
@@ -533,12 +535,49 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	            this.options.plugins.tooltip = pref_tooltip
 	            // chart customization starts here using custom plugin
 
+	            // Colors
+	            var customColors = config[this.getPropertyNamespaceInfo().propertyNamespace + 'colors'] || null;
+	            var highlight_effect = config[this.getPropertyNamespaceInfo().propertyNamespace + 'highlight'] || false;
+	            highlight_effect = highlight_effect === 'false' ? false : true
+
+	            // adding custom colors 
+	            if(customColors != null){
+	                function hexToRgb(hex) {
+	                    // Remove the hash if it exists
+	                    hex = hex.replace(/^#/, '');
+	                  
+	                    // Parse the hex value to separate R, G, and B components
+	                    let bigint = parseInt(hex, 16);
+	                    let r = (bigint >> 16) & 255;
+	                    let g = (bigint >> 8) & 255;
+	                    let b = bigint & 255;
+	                  
+	                    // Return the RGB values as an object
+	                    return [r, g, b];
+	                }
+	                const c = customColors.split(",")
+	                if(typeof(c) == 'object'){
+	                    c.forEach((element,index)=>{
+	                        self.colors[index] = element
+	                        // add rgb conversion
+	                        self.rgbMap[element] = hexToRgb(element)
+	                    })
+	                }
+	            }
+
+
+	            // add the transparent gradient background to the chart
+	            data.datasets.forEach((element,counter) => {
+	                element.backgroundColor = this.colors[counter]
+	            })
+
+	            
 	            // ########## STYLE 1 ############
 	            // tooltip custom position - 
 
 	            Chart.Tooltip.positioners.customPos = function(elements, eventPosition) {
 	                // /** @type {Chart.Tooltip} */
-	                console.log(elements)
+	                // console.log(elements)
 	                var tooltip = this;
 	                let pos = {x:eventPosition.x,y:0}
 	                if(elements.length > 0){
@@ -592,7 +631,11 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                }
 	            }
 
-	            const plugins = [highlightbars] // register the plugin
+	            let plugins = [] // register the plugin
+	            if(highlight_effect){
+	                plugins.push(highlightbars)
+	            }
+
 
 	            // ########## STYLE 2 ############
 

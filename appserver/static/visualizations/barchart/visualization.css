@@ -56,13 +56,17 @@ li.chartjs-legend-list-item {
     padding: 13px;
     background: #fff;
     width: 300px;
-    border-radius: 9px;
+    border-radius: 20px;
     border: 1px solid #E8EAED;
     box-shadow: 0 4px 7px 0px #9f9f9f;
-    position: relative;
+    /* position: relative; */
 }
 
-/* .custom-tooltip1::after {
+span.custom-tooltip1-label {
+    font-size: 12pt;
+}
+
+.custom-tooltip1-carret::after {
   content: "";
   position: absolute;
   top: 100%;
@@ -71,9 +75,9 @@ li.chartjs-legend-list-item {
   border-width: 10px;
   border-style: solid;
   z-index: 8;
-  border-color: #E8EAED transparent transparent transparent;
+  border-color: #fff transparent transparent transparent;
 }
-.custom-tooltip1::before {
+.custom-tooltip1-carret::before {
   content: "";
   position: absolute;
   top: 100%;
@@ -83,11 +87,22 @@ li.chartjs-legend-list-item {
   border-style: solid;
   z-index: 7;
   border-color: #fff transparent transparent transparent;
-} */
+}
+
+.custom-tooltip1-carret {
+    background: rgb(255, 255, 255);
+    z-index: 999;
+    height: 0px;
+    position: absolute;
+    bottom: 8px;
+    height: 1px;
+    width: 20px;
+    /* left: calc(50% - 10px); */
+}
 
 .custom-tooltip1-items-container {
     margin-top: 10px;
-    padding: 5px;
+    padding: 4px;
     background: #F3F4F6;
     border: 1px solid #E8EAED;
     border-radius: 9px;
@@ -105,12 +120,12 @@ li.chartjs-legend-list-item {
     border-radius: 5px;
 }
 .custom-tooltip1-item:nth-child(n+2) {
-    margin-left: 3px;
+    margin-left: 4px;
     width: calc(50% - 3px);
 }
 
 .custom-tooltip1-item-highlight {
-    width: 3px;
+    width: 5px;
     background: lightgray;
     margin-right: 10px;
     border-radius: 5px;
