@@ -255,12 +255,12 @@ define([
                 }
           
                 let top = positionY + (tooltip.caretY - 150)
-                console.log(tooltip)
+                // console.log(tooltip)
                 // if(top < chart.chartArea.top){
                 //     top = chart.chartArea.top
                 // }
                 
-                console.log(tooltip.caretX)
+                // console.log(tooltip.caretX)
                 tooltipEl.innerHTML = `
                 <div class="custom-tooltip1">
                   <span class="custom-tooltip1-label">${tooltip.title[0]}</span>
