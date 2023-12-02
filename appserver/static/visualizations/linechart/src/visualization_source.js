@@ -260,7 +260,7 @@ define([
             // Format data 
             let labelList = []
             let formattedData = {}
-            console.log(data)
+            // console.log(data)
 
             // set chart title
             // this.options.plugins.title.text = data.fields[0].name
@@ -383,7 +383,7 @@ define([
             }
 
             // time format 
-            console.log(data,timeformat)
+            // console.log(data,timeformat)
             if(data.fields.length > 0){
                 if(data.fields[0].name == "_time"){
                     if(timeformat == 'option2') {// date and time

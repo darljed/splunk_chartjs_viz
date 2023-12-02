@@ -1,8 +1,14 @@
 <form class="splunk-formatter-section" section-label="Formatting">
     <splunk-control-group label="Date Format (_time)">
-        <splunk-radio-input name="{{VIZ_NAMESPACE}}.timeformat" value="true">
+        <splunk-radio-input name="{{VIZ_NAMESPACE}}.timeformat" value="option1">
             <option value="option1">Date and Time</option>
             <option value="option2">Date Only</option>
+        </splunk-radio-input>
+    </splunk-control-group>
+    <splunk-control-group label="Stacked">
+        <splunk-radio-input name="{{VIZ_NAMESPACE}}.stacked" value="false">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
         </splunk-radio-input>
     </splunk-control-group>
 </form>
@@ -20,3 +26,24 @@
         <splunk-text-input name="{{VIZ_NAMESPACE}}.brBottomRight"></splunk-text-input>
     </splunk-control-group>
 </form>
+<form class="splunk-formatter-section" section-label="Tooltip Style">
+    <splunk-control-group label="">
+        <splunk-radio-input name="{{VIZ_NAMESPACE}}.tooltip_style" value="style1">
+            <option value="style1">Style 1</option>
+            <option value="style2">Style 2</option>
+        </splunk-radio-input>
+    </splunk-control-group>
+</form>
+<form class="splunk-formatter-section" section-label="Colors">
+    <splunk-control-group label="Colors">
+        <splunk-text-input name="{{VIZ_NAMESPACE}}.colors" value="">
+        </splunk-text-input>
+    </splunk-control-group>
+    <splunk-control-group label="Highlight Effect">
+        <splunk-radio-input name="{{VIZ_NAMESPACE}}.highlight" value="false">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </splunk-radio-input>
+    </splunk-control-group>
+</form>
+
