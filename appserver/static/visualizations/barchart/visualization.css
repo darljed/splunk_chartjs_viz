@@ -94,7 +94,7 @@ span.custom-tooltip1-label {
     z-index: 999;
     height: 0px;
     position: absolute;
-    bottom: 8px;
+    bottom: 10px;
     height: 1px;
     width: 20px;
     /* left: calc(50% - 10px); */
