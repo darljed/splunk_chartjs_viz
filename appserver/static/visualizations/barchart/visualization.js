@@ -442,9 +442,12 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	            }
 
 
+	            var customBarWidth = config[this.getPropertyNamespaceInfo().propertyNamespace + 'barwidth'] || 60;
+
 	            // set the custom colors to the background
 	            data.datasets.forEach((element,counter) => {
 	                element.backgroundColor = this.colors[counter]
+	                element.barPercentage = customBarWidth / 100
 	            })
 
 	            var unit = config[this.getPropertyNamespaceInfo().propertyNamespace + 'unit'] || null;
@@ -455,6 +458,9 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                    unitObj[element.split(":")[0]] = { unit: element.split(":")[1] }
 	                })
 	            }
+
+
+	            
 	            
 	            // ########## STYLE 1 ############
 	            // tooltip custom position - 
