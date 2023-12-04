@@ -170,122 +170,7 @@ define([
                 "#E249C1": [226, 73, 193],
             };
 
-            // tooltip styles 
-            this.tooltip_style1 = {
-                position: 'customPos',
-                displayColors: false,
-                usePointStyle: false,
-                yAlign: 'top',
-                backgroundColor: 'rgb(255,255,255,0)',
-                bodyColor: '#fff',
-                callbacks: {
-                    title: function(context) {
-                        return null
-                    },
-                    label: function(context) {
-                        // const label = context.dataset.label
-                        const dataIndex = context.dataIndex
-                        const value = context.dataset.data[dataIndex]
-                        return value
-                    },
-                    labelPointStyles: function(){
-                        return {}
-                    },
-                    labelTextColor: function(context) {
-                      //   console.log(context)
-                        const base = context.element.base
-                        const y = context.element.y
-                        if(y > base - 30){
-                          return '#000';
-                        }
-                        else{
-                          return '#fff';
-                        }
-                      
-                  }
-                }
-            }
-
-            const getOrCreateTooltip = (chart,tooltip) => {
-                let tooltipEl = chart.canvas.parentNode.querySelector('div');
-              
-                if (!tooltipEl) {
-                  tooltipEl = document.createElement('div');
-                  tooltipEl.style.position = 'absolute'
-                  // tooltipEl.style.transform = 'translate(-50%, 0)';
-                  tooltipEl.style.transition = 'all .1s ease';
-                  chart.canvas.parentNode.appendChild(tooltipEl);
-                }
-              
-                return tooltipEl;
-            };
-              
-            const externalTooltipHandler = (context) => {
-                // Tooltip Element
-                const {chart, tooltip} = context;
-                const tooltipEl = getOrCreateTooltip(chart,tooltip);
-              
-                // Hide if no tooltip
-                if (tooltip.opacity === 0) {
-                  tooltipEl.style.opacity = 0;
-                  return;
-                }
-                let childItems = ''
-                tooltip.dataPoints.forEach(element => {
-                  childItems+= `
-                  <div class="custom-tooltip1-item">
-                    <div class="custom-tooltip1-item-highlight" style="background: ${element.dataset.backgroundColor}"></div>
-                    <div class="custom-tooltip1-item-details">
-                      <span class="custom-tooltip1-item-label">${element.dataset.label}</span>
-                      <span class="custom-tooltip1-item-value">${element.dataset.data[element.dataIndex]}</span>
-                    </div>
-                  </div>
-                  `
-                });
-
-
-                const {offsetLeft: positionX, offsetTop: positionY} = chart.canvas;
-                // Display, position, and set styles for font
-          
-                let left = positionX + (tooltip.caretX - 170)
-                if(left + 300 > (chart.chartArea.right - 15)){
-                  left = (chart.chartArea.right - 15) - 300
-                }if(left < (chart.chartArea.left + 15)){
-                  left = (chart.chartArea.left + 15) 
-                }
-          
-                let top = positionY + (tooltip.caretY - 150)
-                // console.log(tooltip)
-                // if(top < chart.chartArea.top){
-                //     top = chart.chartArea.top
-                // }
-                
-                // console.log(tooltip.caretX)
-                tooltipEl.innerHTML = `
-                <div class="custom-tooltip1">
-                  <span class="custom-tooltip1-label">${tooltip.title[0]}</span>
-                  <div class="custom-tooltip1-items-container">
-                    ${childItems}
-                  </div>
-                  <div class="custom-tooltip1-carret" style="left: ${tooltip.caretX - left - 10}px"></div>
-                </div>`
-          
-          
-              
-                tooltipEl.style.opacity = 1;
-                tooltipEl.style.left =  left + 'px';
-                tooltipEl.style.top = top + 'px';
-                tooltipEl.style.font = tooltip.options.bodyFont.string;
-                tooltipEl.style.padding = tooltip.options.padding + 'px ' + tooltip.options.padding + 'px';
-                tooltipEl.style.pointerEvents = 'none';
-                
-            };
-
-            this.tooltip_style2 = {enabled: false,
-                position: 'nearest',
-                mode: 'index',
-                external: externalTooltipHandler
-            }
+            
 
             this.options = {
                 layout:{
@@ -334,7 +219,7 @@ define([
                       display: false,
                       text: 'This is a test label',
                   },
-                  tooltip: this.tooltip_style1
+                  tooltip: {}
               },
                   interaction:{
                       mode: 'nearest',
@@ -405,7 +290,7 @@ define([
             // Draw something here
             const ctx = document.getElementById(this.id).getContext("2d")
 
-            // custom config 
+            // CAPTURE CUSTOM CONFIG 
             
             // Time Format
             var timeformat = config[this.getPropertyNamespaceInfo().propertyNamespace + 'timeformat'] || 'option1';
@@ -479,15 +364,6 @@ define([
 
             // tooltip style selection 
             var tooltip_style = config[this.getPropertyNamespaceInfo().propertyNamespace + 'tooltip_style'] || 'style1';
-            let pref_tooltip = this.tooltip_style1
-            if(tooltip_style == 'style1'){
-                pref_tooltip = this.tooltip_style1
-            }
-            else if(tooltip_style == 'style2'){
-                pref_tooltip = this.tooltip_style2
-            }
-            // set prefered tooltip style
-            this.options.plugins.tooltip = pref_tooltip
             // chart customization starts here using custom plugin
 
             // Colors
@@ -521,11 +397,19 @@ define([
             }
 
 
-            // add the transparent gradient background to the chart
+            // set the custom colors to the background
             data.datasets.forEach((element,counter) => {
                 element.backgroundColor = this.colors[counter]
             })
 
+            var unit = config[this.getPropertyNamespaceInfo().propertyNamespace + 'unit'] || null;
+            unit = unit != null ? (unit.trim() == "" ? null : unit) : unit
+            let unitObj = {}
+            if(unit != null){
+                unit.split(",").forEach(element=>{
+                    unitObj[element.split(":")[0]] = { unit: element.split(":")[1] }
+                })
+            }
             
             // ########## STYLE 1 ############
             // tooltip custom position - 
@@ -546,12 +430,10 @@ define([
                         x:x,
                         y:y
                     }
-                    // ISSUE: tooltip doesn't show when cursor hovers out of the chart and hovers back in.
                 }
                 return pos;
             }
 
-            // highlightLine : custom highlights to the line chart and hover effect to show a vertical line on hover.
             
             const highlightbars = {
                 id: 'highlightbars',
@@ -591,13 +473,132 @@ define([
                 plugins.push(highlightbars)
             }
 
+            // Tooltip Styles s
+            this.tooltip_style1 = {
+                position: 'customPos',
+                displayColors: false,
+                usePointStyle: false,
+                yAlign: 'top',
+                backgroundColor: 'rgb(255,255,255,0)',
+                bodyColor: '#fff',
+                callbacks: {
+                    title: function(context) {
+                        return null
+                    },
+                    label: function(context) {
+                        // const label = context.dataset.label
+                        const dataIndex = context.dataIndex
+                        const value = context.dataset.data[dataIndex]
+                        return value
+                    },
+                    labelPointStyles: function(){
+                        return {}
+                    },
+                    labelTextColor: function(context) {
+                      //   console.log(context)
+                        const base = context.element.base
+                        const y = context.element.y
+                        if(y > base - 30){
+                          return '#000';
+                        }
+                        else{
+                          return '#fff';
+                        }
+                      
+                  }
+                }
+            }
 
-            // ########## STYLE 2 ############
+            const getOrCreateTooltip = (chart,tooltip) => {
+                let tooltipEl = chart.canvas.parentNode.querySelector('div');
+              
+                if (!tooltipEl) {
+                  tooltipEl = document.createElement('div');
+                  tooltipEl.style.position = 'absolute'
+                  // tooltipEl.style.transform = 'translate(-50%, 0)';
+                  tooltipEl.style.transition = 'all .1s ease';
+                  chart.canvas.parentNode.appendChild(tooltipEl);
+                }
+              
+                return tooltipEl;
+            };
+              
+            const externalTooltipHandler = (context) => {
+                // Tooltip Element
+                const {chart, tooltip} = context;
+                const tooltipEl = getOrCreateTooltip(chart,tooltip);
+              
+                // Hide if no tooltip
+                if (tooltip.opacity === 0) {
+                  tooltipEl.style.opacity = 0;
+                  return;
+                }
+                let childItems = ''
+                tooltip.dataPoints.forEach(element => {
+                  childItems+= `
+                  <div class="custom-tooltip1-item">
+                    <div class="custom-tooltip1-item-highlight" style="background: ${element.dataset.backgroundColor}"></div>
+                    <div class="custom-tooltip1-item-details">
+                      <span class="custom-tooltip1-item-label">${element.dataset.label}</span>
+                      <span class="custom-tooltip1-item-value">${element.dataset.data[element.dataIndex]} ${Object.keys(unitObj).indexOf(element.dataset.label) >= 0 ? unitObj[element.dataset.label].unit : ""}</span>
+                    </div>
+                  </div>
+                  `
+                });
+
+
+                const {offsetLeft: positionX, offsetTop: positionY} = chart.canvas;
+                // Display, position, and set styles for font
+          
+                let left = positionX + (tooltip.caretX - 170)
+                if(left + 300 > (chart.chartArea.right - 15)){
+                  left = (chart.chartArea.right - 15) - 300
+                }if(left < (chart.chartArea.left + 15)){
+                  left = (chart.chartArea.left + 15) 
+                }
+          
+                let top = positionY + (tooltip.caretY - 150)
+                
+                // console.log(tooltip.caretX)
+                tooltipEl.innerHTML = `
+                <div class="custom-tooltip1">
+                  <span class="custom-tooltip1-label">${tooltip.title[0]}</span>
+                  <div class="custom-tooltip1-items-container">
+                    ${childItems}
+                  </div>
+                  <div class="custom-tooltip1-carret" style="left: ${tooltip.caretX - left - 10}px"></div>
+                </div>`
+          
+          
+              
+                tooltipEl.style.opacity = 1;
+                tooltipEl.style.left =  left + 'px';
+                tooltipEl.style.top = top + 'px';
+                tooltipEl.style.font = tooltip.options.bodyFont.string;
+                tooltipEl.style.padding = tooltip.options.padding + 'px ' + tooltip.options.padding + 'px';
+                tooltipEl.style.pointerEvents = 'none';
+                
+            };
+
+            this.tooltip_style2 = {enabled: false,
+                position: 'nearest',
+                mode: 'index',
+                external: externalTooltipHandler
+            }
 
             
 
 
             // end of customization ------##
+
+            if(tooltip_style == 'style2'){
+                pref_tooltip = this.tooltip_style2
+            }
+            else {
+                pref_tooltip = this.tooltip_style1
+            }
+            // set prefered tooltip style
+            this.options.plugins.tooltip = pref_tooltip
 
             if(this.NewChart!=undefined){
                 this.NewChart.destroy(); // for chart update and re-rendering purposes

@@ -11,6 +11,10 @@
             <option value="false">No</option>
         </splunk-radio-input>
     </splunk-control-group>
+    <splunk-control-group label="Unit" help="Comma separated list of fields:unit (<FIELD>:<UNIT>)  Example: TotalHrs:Hours,Sum:$">
+        <splunk-text-input name="{{VIZ_NAMESPACE}}.unit" value="">
+        </splunk-text-input>
+    </splunk-control-group>
 </form>
 <form class="splunk-formatter-section" section-label="Border Radius">
     <splunk-control-group label="Top Left">
