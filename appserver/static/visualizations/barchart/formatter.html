@@ -1,5 +1,5 @@
 <form class="splunk-formatter-section" section-label="Formatting">
-    <splunk-control-group label="Date Format (_time)">
+    <splunk-control-group label="Date Format" help="Only applicable for _time field.">
         <splunk-radio-input name="{{VIZ_NAMESPACE}}.timeformat" value="option1">
             <option value="option1">Date and Time</option>
             <option value="option2">Date Only</option>
@@ -11,7 +11,7 @@
             <option value="false">No</option>
         </splunk-radio-input>
     </splunk-control-group>
-    <splunk-control-group label="Unit" help="Comma separated list of fields:unit (<FIELD>:<UNIT>)  Example: TotalHrs:Hours,Sum:$">
+    <splunk-control-group label="Unit" help="Comma separated list of units (field1:unit1,field2:unit2). Only works for tooltip style 2.">
         <splunk-text-input name="{{VIZ_NAMESPACE}}.unit" value="">
         </splunk-text-input>
     </splunk-control-group>
@@ -39,11 +39,11 @@
     </splunk-control-group>
 </form>
 <form class="splunk-formatter-section" section-label="Colors">
-    <splunk-control-group label="Colors">
+    <splunk-control-group label="Colors" help="Comma separated list of Hex colors. (#fff,#708090,#000)">
         <splunk-text-input name="{{VIZ_NAMESPACE}}.colors" value="">
         </splunk-text-input>
     </splunk-control-group>
-    <splunk-control-group label="Highlight Effect">
+    <splunk-control-group label="Highlight Effect" help="When enabled, the bar only highlights the hovering bar. The rest will be grayed out.">
         <splunk-radio-input name="{{VIZ_NAMESPACE}}.highlight" value="false">
             <option value="true">Yes</option>
             <option value="false">No</option>
