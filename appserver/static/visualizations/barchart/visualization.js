@@ -231,7 +231,7 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                        beginAtZero: true,
 	                        ticks: {
 	                          // forces step size to be 50 units
-	                          stepSize: 25 // default
+	                          stepSize: 5000 // default
 	                        },
 	                        grid: {
 	                          color: '#ededed',
@@ -458,6 +458,24 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                    unitObj[element.split(":")[0]] = { unit: element.split(":")[1] }
 	                })
 	            }
+
+
+	            // set stepsize 
+	            let max = 0
+	            console.log(data)
+	            data.datasets.forEach(element=>{
+	                element.data.forEach(el=>{
+	                    el = parseInt(el)
+	                    if(el > max){
+	                        max = el
+	                    }
+	                })
+	                console.log(max)
+	            })
+
+	            const rounder = max < 100 ? 10 : (max < 1000 ? 100 : 1000)
+
+	            this.options.scales.y.ticks.stepSize = ((Math.round(Math.ceil(max) / rounder) *  rounder) ) / 5
 
 
 	            
