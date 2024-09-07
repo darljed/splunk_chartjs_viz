@@ -513,7 +513,7 @@ define([
                         // const label = context.dataset.label
                         const dataIndex = context.dataIndex
                         const value = context.dataset.data[dataIndex]
-                        return value
+                        return `${unit !== null ? `${unit} ` : '' }${value}`
                     },
                     labelPointStyles: function(){
                         return {}

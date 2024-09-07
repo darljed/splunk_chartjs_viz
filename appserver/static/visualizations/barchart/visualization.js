@@ -558,7 +558,7 @@ define(["/static/app/splunk_chartjs_viz/node_modules/chart.js/dist/chart.min.js"
 	                        // const label = context.dataset.label
 	                        const dataIndex = context.dataIndex
 	                        const value = context.dataset.data[dataIndex]
-	                        return value
+	                        return `${unit !== null ? `${unit} ` : '' }${value}`
 	                    },
 	                    labelPointStyles: function(){
 	                        return {}
