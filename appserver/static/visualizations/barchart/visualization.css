@@ -107,6 +107,8 @@ span.custom-tooltip1-label {
     border: 1px solid #E8EAED;
     border-radius: 9px;
     display: flex;
+    flex-wrap: wrap;
+    gap: 5px 2px;
 }
 
 .custom-tooltip1-item {
