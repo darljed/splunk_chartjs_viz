@@ -581,16 +581,19 @@ define([
                   left = (chart.chartArea.left + 15) 
                 }
           
-                let top = positionY + (tooltip.caretY - 150)
+                let top = positionY + (tooltip.caretY - 20)
                 
-                // console.log(tooltip.caretX)
+                console.log(tooltip.caretY)
                 tooltipEl.innerHTML = `
-                <div class="custom-tooltip1">
-                  <span class="custom-tooltip1-label">${tooltip.title[0]}</span>
-                  <div class="custom-tooltip1-items-container">
-                    ${childItems}
-                  </div>
-                  <div class="custom-tooltip1-carret" style="left: ${tooltip.caretX - left - 10}px"></div>
+
+                <div class="custom-tooltip-wrapper">
+                    <div class="custom-tooltip1">
+                        <span class="custom-tooltip1-label">${tooltip.title[0]}</span>
+                        <div class="custom-tooltip1-items-container">
+                            ${childItems}
+                        </div>
+                        <div class="custom-tooltip1-carret" style="left: ${tooltip.caretX - left - 10}px"></div>
+                    </div>
                 </div>`
           
           
@@ -598,9 +601,10 @@ define([
                 tooltipEl.style.opacity = 1;
                 tooltipEl.style.left =  left + 'px';
                 tooltipEl.style.top = top + 'px';
+                // tooltipEl.style.bottom = positionY + (tooltip.caretY)
                 tooltipEl.style.font = tooltip.options.bodyFont.string;
                 tooltipEl.style.padding = tooltip.options.padding + 'px ' + tooltip.options.padding + 'px';
-                tooltipEl.style.pointerEvents = 'none';
+                // tooltipEl.style.pointerEvents = 'none';
                 
             };
 

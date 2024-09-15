@@ -59,7 +59,14 @@ li.chartjs-legend-list-item {
     border-radius: 20px;
     border: 1px solid #E8EAED;
     box-shadow: 0 4px 7px 0px #9f9f9f;
-    /* position: relative; */
+    position: absolute;
+    bottom: 0;
+}
+
+div.custom-tooltip-wrapper {
+    position: relative;
+    width: 100%;
+    background-color: red;
 }
 
 span.custom-tooltip1-label {
